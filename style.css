@@ -1,0 +1,796 @@
+:where(html *) {
+    position: absolute;
+    box-sizing: border-box;
+  }
+  
+  body {
+    overflow: hidden;
+    font-size: .42vmin;
+    color: #fff;
+    background-color: #000;
+    filter: sepia(.95) contrast(1.2) saturate(3) hue-rotate(-17deg);
+  }
+  
+  body, .pivot, .cube, .quarter, .half, .lid, .props, .props > div, .playBG {
+    inset: 0;
+  }
+  
+  body, #hoverable, .scene, .lid, .cutOff, .quadrant, .poles label, .props, .playBtn, .playBtn * {
+    display: grid;
+  }
+  
+  .scene {
+    position: relative;
+    width: 100em;
+    place-self: center;
+    container-type: size;
+    perspective: 350em;
+    pointer-events: none;
+    --sides: 32;
+    --angle: (360deg/var(--sides)/2);
+    --curl: (var(--cStep)*var(--angle));
+  
+    & * {
+      transform-style: preserve-3d;
+    } 
+  }
+  
+  .scene, #hoverable, .cutOff, .quadrant, .quadBg, .nacho, .playBtn {
+    aspect-ratio: 1;
+  }
+  
+  .pivot {
+    transform-origin: 50% 50% 45em;
+    animation: spin 90s linear infinite;
+  }
+  
+  @keyframes spin {
+    100% {
+      rotate: y 1turn;
+    }
+  }
+  
+  .cube {
+    animation: tumble 30s linear infinite -5s;
+    transform-origin: inherit;
+  
+    --theAngle: var(--curl);
+  
+    --oneCos: (cos(var(--theAngle)));
+    --oneSin: (sin(var(--theAngle)));
+    --twoCos: (var(--oneCos) + cos(var(--theAngle)*3));
+    --twoSin: (var(--oneSin) + sin(var(--theAngle)*3));
+    --threeCos: (var(--twoCos) + cos(var(--theAngle)*5));
+    --threeSin: (var(--twoSin) + sin(var(--theAngle)*5));
+    --fourCos: (var(--threeCos) + cos(var(--theAngle)*7)); /* same as --cosines */
+    --fourSin: (var(--threeSin) + sin(var(--theAngle)*7));
+  
+    --sliceAngle: calc(atan(var(--fourSin)/var(--fourCos)));
+    --sliceW: (50/(var(--fourCos) + var(--fourSin)));
+  }
+  
+  @keyframes tumble {
+    100% { rotate: x 1turn; }
+  }
+  
+  .quarter {
+    rotate: calc(var(--qStep)*90deg);
+  
+    &:nth-child(1) { --qStep: 0; }
+    &:nth-child(2) { --qStep: 1; }
+    &:nth-child(3) { --qStep: 2; }
+    &:nth-child(4) { --qStep: 3; }
+  
+  }
+  
+  .half {
+    &:nth-child(1) { --dir: 1;  }
+    &:nth-child(2) { --dir: -1; }
+  
+  }
+  
+  .slice {
+    width: calc(1em*var(--sliceW));
+    top: calc(var(--yA)*1cqw);
+    transform-origin: calc(50%*(1 - var(--dir))) 0;
+    transform: rotate(calc(var(--dir)*(-2*var(--fStep) - 1)*var(--curl)));
+  
+    &:nth-child(1) {
+      --fStep: 0;
+      --xA: calc(50 - cos(var(--curl))*var(--sliceW));  /* --xA: 8.2955340520175; */
+      --yA: calc(sin(var(--curl))*var(--sliceW));  /* --yA: 8.2955340520175; */
+      & .facet { 
+        --skewCosines: var(--oneCos);
+        --skewSines: var(--oneSin);
+      }
+    }
+  
+    &:nth-child(2) {
+      --fStep: 1;
+      --xA: calc(50 - var(--twoCos)*var(--sliceW));  /* --xA: 8.2955340520175; */
+      --yA: calc(var(--twoSin)*var(--sliceW));  /* --yA: 8.2955340520175; */
+      & .facet { 
+        --skewCosines: var(--twoCos);
+        --skewSines: var(--twoSin);
+      }
+    }
+  
+    &:nth-child(3) {
+      --fStep: 2;
+      --xA: calc(50 - var(--threeCos)*var(--sliceW));  /* --xA: 8.2955340520175; */
+      --yA: calc(var(--threeSin)*var(--sliceW));  /* --yA: 8.2955340520175; */
+      & .facet { 
+        --skewCosines: var(--threeCos);
+        --skewSines: var(--threeSin);
+      }
+    }
+  
+    &:nth-child(4) {
+      --fStep: 3;
+      --xA: calc(50 - var(--fourCos)*var(--sliceW));  /* --xA: 8.2955340520175; */
+      --yA: calc(var(--fourSin)*var(--sliceW));   /* --yA: 8.2955340520175; */
+      & .facet {
+        --skewCosines: var(--fourCos);
+        --skewSines: var(--fourSin);
+      }
+    }
+  
+    .half:nth-child(1) & {
+      left: calc(var(--xA)*1cqw);
+    }
+  
+    .half:nth-child(2) & {
+      right: calc(var(--xA)*1cqw);
+    }
+  }
+  
+  .facet {
+    --theAngle: var(--skew);
+    --sliceX: var(--skewCosines)*var(--sliceW);
+    --sliceY: (50 - var(--skewSines)*var(--sliceW));
+    --xOffset: (cos(var(--skew)*(2*var(--fStep) + 1))*var(--sliceW)/2);
+    --yOffset: (0 - (sin(var(--skew)*(2*var(--fStep) + 1))*var(--sliceW)/2));
+    --midSliceX: (var(--sliceX) - var(--xOffset));
+    --midSliceY: (var(--sliceY) - var(--yOffset));
+    --skew: (var(--skewStep)*var(--angle)); 
+    --sliceHypot: hypot(var(--midSliceX),var(--midSliceY));
+    --hypAngle: atan(var(--midSliceY)/var(--midSliceX));
+    --sumAngle: (var(--hypAngle) + (2*var(--fStep) + 1)*var(--skew));
+    --sliceB: (var(--sliceHypot) * sin(var(--sumAngle)));
+    --tipOffsetX: (var(--iStep)*var(--sliceHypot) * sin(90deg - var(--sumAngle)));
+    --sliceH: hypot((var(--sliceB)*var(--iStep)),100);
+    width: calc(var(--sliceW)*1em);
+    height: calc(var(--sliceH)*1em);
+    transform: skewX(calc(atan(var(--tipOffsetX)/var(--sliceH))*var(--dir)));
+    rotate: x calc(atan(100/(var(--sliceB)*var(--iStep))));
+    transform-origin: 50% 0;
+    --gradAngle: atan((var(--iStep)*var(--sliceW)/2)/var(--sliceH));
+    --gradY: calc(100%/var(--iStep) + 1px);
+    --gradHue: 11.25deg*(var(--cStep)*3 + 1);
+    --gradBG2: conic-gradient(from calc(-1*var(--gradAngle)) at 50% var(--gradY), 
+        hsl(calc(var(--gradHue)*(.5*(1 + var(--dir)) + 1*var(--fStep)*var(--dir))) 100% 50%),
+        hsl(calc(var(--gradHue)*(.5*(1 + var(--dir)) - 1  + 1*var(--fStep)*var(--dir))) 100% 50%)
+        calc(2*var(--gradAngle)), transparent 0);
+    background-image: 
+      repeating-linear-gradient(calc(90deg*(1 - var(--griDir)*var(--dir))), #0008 0 12.5%, transparent 0 25%),
+      var(--gradBG2);
+    backface-visibility: hidden;
+    background-blend-mode: normal, difference;
+    mask-image: conic-gradient(from calc(-1*var(--gradAngle)) at 50% var(--gradY), black calc(2*var(--gradAngle)), transparent 0);
+  
+    .slice:nth-child(odd) & { --griDir: 1; }
+    .slice:nth-child(2n) & { --griDir: -1; }
+  
+    .half:nth-child(2) & {
+      right: 0;
+    }
+    
+  }
+  
+  .facet, .quadBG {
+    animation: bgLight 6s linear alternate infinite;
+  }
+  
+  @keyframes bgLight {
+    0% { background-color: hsl(280deg 100% 0%) }
+    100% { background-color: hsl(560deg 100% 100%) }
+  }
+  
+  .lid {
+    & * {
+      backface-visibility: hidden;
+    }
+  
+    &:nth-child(1 of .lid) {
+      translate: 0 0 100em;
+      scale: calc(1 - var(--iStep));
+    }
+  
+    &:nth-child(2 of .lid) {
+      rotate: x 180deg;
+    }
+  
+    & .cutOff {
+      --base: (100*sin(360deg/32/2));
+      --radius: calc(.5em*var(--base)/sin(var(--curl)));
+      top: 0;
+      transform-origin: 50% 0%;
+    }
+  }
+  
+  .cutOff {
+    width: calc(var(--radius)*2);
+    border-radius: 50%;
+    justify-self: center;
+    overflow: hidden;
+    
+    & > .cutOff {
+      transform-origin: center 50cqw;
+      rotate: 90deg;
+    }
+  }
+  
+  .quadrant, .quadBG {
+    justify-self: center;
+    width: 100cqw;
+    top: 0;
+  }
+  
+  
+  .quadrant {
+    mix-blend-mode: difference;
+    filter: invert();
+  
+    :nth-child(1 of .lid) & {
+      background-image: repeating-conic-gradient(from 45deg, #888 0 45deg, #000 0 90deg);
+    }
+  
+    :nth-child(2 of .lid) & {
+      --grad: #888 25%, black 0 75%, #888 0;
+      background-image: repeating-conic-gradient(from 45deg, #888 0 90deg, #000 0 180deg), linear-gradient(45deg, var(--grad)), linear-gradient(-45deg, var(--grad));
+      background-blend-mode: difference;
+    }
+  
+  }
+  
+  .quadBG {
+    height: 100em;
+    justify-self: center;
+    top: 0;
+    background-image: repeating-conic-gradient(red, yellow, lime, cyan, blue, magenta, red 180deg);
+    mix-blend-mode: multiply;
+    background-blend-mode: difference;
+  }
+  
+  .cross {
+    inset: calc((sin(45deg) - .5)*-100em);
+    mix-blend-mode: difference;
+    background-image: repeating-conic-gradient(#888 0 90deg, #000 0 180deg);
+    --crossDir: 1;
+    
+    &:nth-child(n+4) {
+      --crossDir: -1;
+    }
+  
+    &:nth-child(3n+1) {
+      rotate: calc(var(--crossDir)*atan(
+        (cos(var(--curl))) / (50/var(--sliceW) - sin(var(--curl)))
+      ));
+    }
+  
+    &:nth-child(3n+2) {
+      rotate: calc(var(--crossDir)*atan(
+        (var(--twoCos)) / (50/var(--sliceW) - (var(--twoSin)))
+      ));
+    }
+  
+    &:nth-child(3n) {
+      rotate: calc(var(--crossDir)*atan(
+        (var(--threeCos)) / (50/var(--sliceW) - (var(--threeSin)))
+      ));
+    }
+  }
+  
+  .nacho {
+    width: 100%;
+    justify-self: center;
+    background-image: radial-gradient(circle, #888 calc(var(--radius) - 37.5em), #000 calc(var(--radius) - 37.5em) calc(var(--radius) - 25em), #888 calc(var(--radius) - 25em) calc(var(--radius) - 12.5em), #000 calc(var(--radius) - 12.5em));
+    background-size: calc(var(--radius)*2) calc(var(--radius)*2);
+    background-position-x: center;
+    clip-path: polygon(0 0, 50% 50%, 100% 0);
+    rotate: calc(var(--secStep)*90deg);
+    mix-blend-mode: difference;
+  
+    &:nth-child(1 of .nacho) { --secStep: 1; }
+    &:nth-child(2 of .nacho) { --secStep: 2; }
+    &:nth-child(3 of .nacho) { --secStep: 3; }
+    &:nth-child(4 of .nacho) { --secStep: 4; }
+  }
+  
+  .diagon {
+    place-self: center;
+    rotate: calc(45deg*var(--diagDir));
+    --diagX: (50 - var(--sliceW)*var(--cosSet));
+    --diagY: (var(--sliceW)*var(--sinSet));
+    width: calc( ( var(--diagX) - var(--diagY) )*sqrt(2)*1cqw );
+    height: calc( (100 - var(--diagX) - var(--diagY) )*sqrt(2)*1cqw );
+    background-color: #888;
+    --diagDir: 1;
+    mix-blend-mode: difference;
+  
+    &:nth-child(3n+1) {
+      --cosSet: cos(var(--curl));
+      --sinSet: sin(var(--curl));
+    }
+  
+    &:nth-child(3n+2) {
+      --cosSet: var(--twoCos);
+      --sinSet: var(--twoSin);
+    }
+  
+    &:nth-child(3n) {
+      --cosSet: var(--threeCos);
+      --sinSet: var(--threeSin);
+    }
+  
+    &:nth-child(n+4) {
+      --diagDir: -1;
+    }
+  }
+  
+  input {
+    display: none;
+  }
+  
+  :where(.facet) { --square: calc(1 - var(--iStep)); }
+  
+  #hoverable {
+    width: 100vmin;
+    place-self: center;
+    border-radius: 50%;
+    /* mask-image: radial-gradient(transparent 60%, black 0); */
+    justify-items: center;
+    pointer-events: none;
+    container-type: size;
+    --poleW: 10;
+  
+    & > div:not(.props) {
+      width: fit-content;
+      height: fit-content;
+      display: inherit;
+      justify-items: center;
+  
+      & > * {
+        height: 50cqh;
+        transform-origin: 50% 50cqh;
+        clip-path: polygon(0 0, 50% 50cqh, 100% 0);
+        pointer-events: all;
+  
+      }
+    }
+  }
+  
+  .transition {
+    --poleOff: (atan(.5*var(--poleW)/50));
+    
+    & div {
+      z-index: 1;
+      --tAngle: calc((45deg - var(--poleOff))/98);
+      width: calc(tan(var(--tAngle))*100cqw + 2px);
+      rotate: calc(var(--tStep)*90deg + (var(--nth) - 1.5)*2*var(--tAngle) + var(--poleOff));
+  
+          &:nth-child(1), nav:has(.transition &:nth-child(1):hover) ~ .scene { --nth: 2; }
+          &:nth-child(2), nav:has(.transition &:nth-child(2):hover) ~ .scene { --nth: 3; }
+          &:nth-child(3), nav:has(.transition &:nth-child(3):hover) ~ .scene { --nth: 4; }
+          &:nth-child(4), nav:has(.transition &:nth-child(4):hover) ~ .scene { --nth: 5; }
+          &:nth-child(5), nav:has(.transition &:nth-child(5):hover) ~ .scene { --nth: 6; }
+          &:nth-child(6), nav:has(.transition &:nth-child(6):hover) ~ .scene { --nth: 7; }
+          &:nth-child(7), nav:has(.transition &:nth-child(7):hover) ~ .scene { --nth: 8; }
+          &:nth-child(8), nav:has(.transition &:nth-child(8):hover) ~ .scene { --nth: 9; }
+          &:nth-child(9), nav:has(.transition &:nth-child(9):hover) ~ .scene { --nth: 10; }
+          &:nth-child(10), nav:has(.transition &:nth-child(10):hover) ~ .scene { --nth: 11; }
+          &:nth-child(11), nav:has(.transition &:nth-child(11):hover) ~ .scene { --nth: 12; }
+          &:nth-child(12), nav:has(.transition &:nth-child(12):hover) ~ .scene { --nth: 13; }
+          &:nth-child(13), nav:has(.transition &:nth-child(13):hover) ~ .scene { --nth: 14; }
+          &:nth-child(14), nav:has(.transition &:nth-child(14):hover) ~ .scene { --nth: 15; }
+          &:nth-child(15), nav:has(.transition &:nth-child(15):hover) ~ .scene { --nth: 16; }
+          &:nth-child(16), nav:has(.transition &:nth-child(16):hover) ~ .scene { --nth: 17; }
+          &:nth-child(17), nav:has(.transition &:nth-child(17):hover) ~ .scene { --nth: 18; }
+          &:nth-child(18), nav:has(.transition &:nth-child(18):hover) ~ .scene { --nth: 19; }
+          &:nth-child(19), nav:has(.transition &:nth-child(19):hover) ~ .scene { --nth: 20; }
+          &:nth-child(20), nav:has(.transition &:nth-child(20):hover) ~ .scene { --nth: 21; }
+          &:nth-child(21), nav:has(.transition &:nth-child(21):hover) ~ .scene { --nth: 22; }
+          &:nth-child(22), nav:has(.transition &:nth-child(22):hover) ~ .scene { --nth: 23; }
+          &:nth-child(23), nav:has(.transition &:nth-child(23):hover) ~ .scene { --nth: 24; }
+          &:nth-child(24), nav:has(.transition &:nth-child(24):hover) ~ .scene { --nth: 25; }
+          &:nth-child(25), nav:has(.transition &:nth-child(25):hover) ~ .scene { --nth: 26; }
+          &:nth-child(26), nav:has(.transition &:nth-child(26):hover) ~ .scene { --nth: 27; }
+          &:nth-child(27), nav:has(.transition &:nth-child(27):hover) ~ .scene { --nth: 28; }
+          &:nth-child(28), nav:has(.transition &:nth-child(28):hover) ~ .scene { --nth: 29; }
+          &:nth-child(29), nav:has(.transition &:nth-child(29):hover) ~ .scene { --nth: 30; }
+          &:nth-child(30), nav:has(.transition &:nth-child(30):hover) ~ .scene { --nth: 31; }
+          &:nth-child(31), nav:has(.transition &:nth-child(31):hover) ~ .scene { --nth: 32; }
+          &:nth-child(32), nav:has(.transition &:nth-child(32):hover) ~ .scene { --nth: 33; }
+          &:nth-child(33), nav:has(.transition &:nth-child(33):hover) ~ .scene { --nth: 34; }
+          &:nth-child(34), nav:has(.transition &:nth-child(34):hover) ~ .scene { --nth: 35; }
+          &:nth-child(35), nav:has(.transition &:nth-child(35):hover) ~ .scene { --nth: 36; }
+          &:nth-child(36), nav:has(.transition &:nth-child(36):hover) ~ .scene { --nth: 37; }
+          &:nth-child(37), nav:has(.transition &:nth-child(37):hover) ~ .scene { --nth: 38; }
+          &:nth-child(38), nav:has(.transition &:nth-child(38):hover) ~ .scene { --nth: 39; }
+          &:nth-child(39), nav:has(.transition &:nth-child(39):hover) ~ .scene { --nth: 40; }
+          &:nth-child(40), nav:has(.transition &:nth-child(40):hover) ~ .scene { --nth: 41; }
+          &:nth-child(41), nav:has(.transition &:nth-child(41):hover) ~ .scene { --nth: 42; }
+          &:nth-child(42), nav:has(.transition &:nth-child(42):hover) ~ .scene { --nth: 43; }
+          &:nth-child(43), nav:has(.transition &:nth-child(43):hover) ~ .scene { --nth: 44; }
+          &:nth-child(44), nav:has(.transition &:nth-child(44):hover) ~ .scene { --nth: 45; }
+          &:nth-child(45), nav:has(.transition &:nth-child(45):hover) ~ .scene { --nth: 46; }
+          &:nth-child(46), nav:has(.transition &:nth-child(46):hover) ~ .scene { --nth: 47; }
+          &:nth-child(47), nav:has(.transition &:nth-child(47):hover) ~ .scene { --nth: 48; }
+          &:nth-child(48), nav:has(.transition &:nth-child(48):hover) ~ .scene { --nth: 49; }
+          &:nth-child(49), nav:has(.transition &:nth-child(49):hover) ~ .scene { --nth: 50; }
+          &:nth-child(50), nav:has(.transition &:nth-child(50):hover) ~ .scene { --nth: 51; }
+          &:nth-child(51), nav:has(.transition &:nth-child(51):hover) ~ .scene { --nth: 52; }
+          &:nth-child(52), nav:has(.transition &:nth-child(52):hover) ~ .scene { --nth: 53; }
+          &:nth-child(53), nav:has(.transition &:nth-child(53):hover) ~ .scene { --nth: 54; }
+          &:nth-child(54), nav:has(.transition &:nth-child(54):hover) ~ .scene { --nth: 55; }
+          &:nth-child(55), nav:has(.transition &:nth-child(55):hover) ~ .scene { --nth: 56; }
+          &:nth-child(56), nav:has(.transition &:nth-child(56):hover) ~ .scene { --nth: 57; }
+          &:nth-child(57), nav:has(.transition &:nth-child(57):hover) ~ .scene { --nth: 58; }
+          &:nth-child(58), nav:has(.transition &:nth-child(58):hover) ~ .scene { --nth: 59; }
+          &:nth-child(59), nav:has(.transition &:nth-child(59):hover) ~ .scene { --nth: 60; }
+          &:nth-child(60), nav:has(.transition &:nth-child(60):hover) ~ .scene { --nth: 61; }
+          &:nth-child(61), nav:has(.transition &:nth-child(61):hover) ~ .scene { --nth: 62; }
+          &:nth-child(62), nav:has(.transition &:nth-child(62):hover) ~ .scene { --nth: 63; }
+          &:nth-child(63), nav:has(.transition &:nth-child(63):hover) ~ .scene { --nth: 64; }
+          &:nth-child(64), nav:has(.transition &:nth-child(64):hover) ~ .scene { --nth: 65; }
+          &:nth-child(65), nav:has(.transition &:nth-child(65):hover) ~ .scene { --nth: 66; }
+          &:nth-child(66), nav:has(.transition &:nth-child(66):hover) ~ .scene { --nth: 67; }
+          &:nth-child(67), nav:has(.transition &:nth-child(67):hover) ~ .scene { --nth: 68; }
+          &:nth-child(68), nav:has(.transition &:nth-child(68):hover) ~ .scene { --nth: 69; }
+          &:nth-child(69), nav:has(.transition &:nth-child(69):hover) ~ .scene { --nth: 70; }
+          &:nth-child(70), nav:has(.transition &:nth-child(70):hover) ~ .scene { --nth: 71; }
+          &:nth-child(71), nav:has(.transition &:nth-child(71):hover) ~ .scene { --nth: 72; }
+          &:nth-child(72), nav:has(.transition &:nth-child(72):hover) ~ .scene { --nth: 73; }
+          &:nth-child(73), nav:has(.transition &:nth-child(73):hover) ~ .scene { --nth: 74; }
+          &:nth-child(74), nav:has(.transition &:nth-child(74):hover) ~ .scene { --nth: 75; }
+          &:nth-child(75), nav:has(.transition &:nth-child(75):hover) ~ .scene { --nth: 76; }
+          &:nth-child(76), nav:has(.transition &:nth-child(76):hover) ~ .scene { --nth: 77; }
+          &:nth-child(77), nav:has(.transition &:nth-child(77):hover) ~ .scene { --nth: 78; }
+          &:nth-child(78), nav:has(.transition &:nth-child(78):hover) ~ .scene { --nth: 79; }
+          &:nth-child(79), nav:has(.transition &:nth-child(79):hover) ~ .scene { --nth: 80; }
+          &:nth-child(80), nav:has(.transition &:nth-child(80):hover) ~ .scene { --nth: 81; }
+          &:nth-child(81), nav:has(.transition &:nth-child(81):hover) ~ .scene { --nth: 82; }
+          &:nth-child(82), nav:has(.transition &:nth-child(82):hover) ~ .scene { --nth: 83; }
+          &:nth-child(83), nav:has(.transition &:nth-child(83):hover) ~ .scene { --nth: 84; }
+          &:nth-child(84), nav:has(.transition &:nth-child(84):hover) ~ .scene { --nth: 85; }
+          &:nth-child(85), nav:has(.transition &:nth-child(85):hover) ~ .scene { --nth: 86; }
+          &:nth-child(86), nav:has(.transition &:nth-child(86):hover) ~ .scene { --nth: 87; }
+          &:nth-child(87), nav:has(.transition &:nth-child(87):hover) ~ .scene { --nth: 88; }
+          &:nth-child(88), nav:has(.transition &:nth-child(88):hover) ~ .scene { --nth: 89; }
+          &:nth-child(89), nav:has(.transition &:nth-child(89):hover) ~ .scene { --nth: 90; }
+          &:nth-child(90), nav:has(.transition &:nth-child(90):hover) ~ .scene { --nth: 91; }
+          &:nth-child(91), nav:has(.transition &:nth-child(91):hover) ~ .scene { --nth: 92; }
+          &:nth-child(92), nav:has(.transition &:nth-child(92):hover) ~ .scene { --nth: 93; }
+          &:nth-child(93), nav:has(.transition &:nth-child(93):hover) ~ .scene { --nth: 94; }
+          &:nth-child(94), nav:has(.transition &:nth-child(94):hover) ~ .scene { --nth: 95; }
+          &:nth-child(95), nav:has(.transition &:nth-child(95):hover) ~ .scene { --nth: 96; }
+          &:nth-child(96), nav:has(.transition &:nth-child(96):hover) ~ .scene { --nth: 97; }
+          &:nth-child(97), nav:has(.transition &:nth-child(97):hover) ~ .scene { --nth: 98; }
+          &:nth-child(98), nav:has(.transition &:nth-child(98):hover) ~ .scene { --nth: 99; }
+        }
+  }
+  
+  .transition, .poles label {
+    &:nth-child(1) { --tStep: 0; }
+    &:nth-child(2) { --tStep: 1; }
+    &:nth-child(3) { --tStep: 2; }
+    &:nth-child(4) { --tStep: 3; }
+  }
+  
+  .poles label {
+    width: calc(var(--poleW)*1cqh);
+    rotate: calc(90deg*var(--tStep));
+  }
+  
+  .props {
+    pointer-events: none;
+  
+    & > div {
+      display: inherit;
+    }
+  }
+  
+  .icon {
+    height: min(12.5cqw, 205px);
+    aspect-ratio: calc(sin(60deg));
+    justify-self: center;
+    transition: .5s ease-in-out all;
+  
+    &::before,
+    &::after {
+      content: '';
+      inset: 0;
+      position: absolute;
+      background-image: inherit;
+      background-size: inherit;
+      background-repeat: inherit;
+      background-position-y: inherit;
+      mask-image: inherit;
+      mask-size: inherit;
+      mask-repeat: inherit;
+      mask-position: inherit;
+      clip-path: inherit;
+      transition: inherit;
+    }
+  
+    &::before {
+      background: gold;
+    }
+  
+    &::after {
+      filter: brightness(0);
+      scale: .8
+    }
+  
+    &:nth-child(1) {
+      --end1: 30deg;
+      --end2: 0;
+    }
+  
+    &:nth-child(2) {
+      justify-self: end;
+      --end1: 0;
+      --end2: 60deg;
+    }
+  
+  
+    &:nth-child(2n) { align-self: center;}
+    
+    &:nth-child(3) {
+      align-self: end;
+      background-image: radial-gradient(red calc(sin(45deg)*100%), transparent 0), linear-gradient(90deg, gold, blue);
+      background-size: 100% 50%, 100% 75%;
+      background-position-y: 0, 100%;
+      background-repeat: no-repeat;
+    }
+  
+    &:nth-child(n+3)::after {
+      rotate: 180deg;
+    }
+    
+    &:nth-child(4) {
+      justify-self: start;
+      background-image: conic-gradient(from 60deg, #11f 120deg, gold 0 240deg, red 0);
+    }
+  
+    &:nth-child(1),
+    &:nth-child(4) {
+      clip-path: polygon(50% 0, 150% 50%, 50% 100%, -50% 50%);
+  
+      &::after {
+        mask-image: 
+          conic-gradient(at 55% 50%, black 120deg, transparent 0),
+          conic-gradient(from 240deg at 45% 50%, black 120deg, transparent 0),
+          conic-gradient(from 120deg at 50% 57%, black 120deg, transparent 0)
+          ;
+      }
+    }
+  
+    &:nth-child(2),
+    &:nth-child(3) {
+      mask-image: linear-gradient(black, black), radial-gradient(#000 calc(sin(45deg)*100%), transparent 0);
+      mask-size: 100% 50%;
+      mask-position: 0 center, 0 0%;
+      mask-repeat: no-repeat, repeat-y;
+  
+      &::after {
+        mask-image: radial-gradient(black 16.25%, transparent 0 22.5%, black 0);
+        mask-size: min(50cqw, 833px) min(25cqw, 416px);
+        mask-position: center 22%;
+      }
+    }
+  
+    &:nth-child(1),
+    &:nth-child(2) {
+      background-image: conic-gradient(from 150deg at 50% 0, #11f var(--end1), gold var(--end2) 60deg, transparent 0);
+  
+      &::before {
+        clip-path: polygon(50% 0, calc(100%/sin(60deg)) 100%, calc(100%*(1 - 1/sin(60deg))) 100%)
+      }
+    }
+  }
+  
+  .arrows {
+    z-index: -1;
+    background-image: repeating-conic-gradient(red, yellow, lime, white, cyan, magenta, red 10%), radial-gradient(black calc(70% - 4cqw), white 0 calc(70% - 3cqw), black 0);
+    background-blend-mode: darken;
+    mask-image: repeating-conic-gradient(from 15deg, black 0 60deg, transparent 0 90deg);
+  }
+  
+  :is(#pyramid:checked ~ #hoverable #pyrIco,
+  #cylinder:checked ~ #hoverable #cylIco,
+  #cube:checked ~ #hoverable #cubIco,
+  #cone:checked ~ #hoverable #conIco) {
+    &::before { opacity: 0; }
+    &::after { scale: 0; }
+  }
+  
+  .poles:has(label:nth-child(1):hover) ~ .props .icons div:nth-child(1),
+  .poles:has(label:nth-child(2):hover) ~ .props .icons div:nth-child(2),
+  .poles:has(label:nth-child(3):hover) ~ .props .icons div:nth-child(3),
+  .poles:has(label:nth-child(4):hover) ~ .props .icons div:nth-child(4) {
+    filter: hue-rotate(30deg) contrast(2);
+    
+    &::before {
+      background-color: white;
+    }
+  }
+  
+  :where(#cube:checked ~ .scene),
+  nav:has(.cubeBtn:hover) ~ .scene {
+    --iStep: .01;
+    --cStep: .01;
+    --skewStep: .01;
+  }
+  
+  nav:has(#cylinderCube div:hover) ~ .scene {
+    --iStep: .01;
+    --cStep: calc(1 - var(--nth)*.01);
+    --skewStep: .01;
+  }
+  
+  :where(#cylinder:checked ~ .scene),
+  nav:has(.cylBtn:hover) ~ .scene {
+    --iStep: .01;
+    --cStep: 1;
+    --skewStep: .01;
+  }
+  
+  :where(#cone:checked ~ .scene),
+  nav:has(.coneBtn:hover) ~ .scene {
+    --iStep: 1;
+    --cStep: 1;
+    --skewStep: 1;
+  }
+  
+  :where(#pyramid:checked ~ .scene),
+  nav:has(.pyrBtn:hover) ~ .scene {
+    --iStep: 1;
+    --cStep: .01;
+    --skewStep: .01;
+  }
+  
+  nav:has(#coneCylinder div:hover) ~ .scene {
+    --iStep: calc(1 - var(--nth)*.01);
+    --cStep: 1;
+    --skewStep: 1;
+  }
+  
+  nav:has(#pyramidCone div:hover) ~ .scene {
+    --iStep: 1;
+    --cStep: calc(var(--nth)*.01);
+    --skewStep: var(--cStep);
+  }
+  
+  nav:has(#cubePyramid div:hover) ~ .scene {
+    --iStep: calc(var(--nth)*.01);
+    --cStep: .01;
+    --skewStep: .01;
+  }
+  
+  .playBtn {
+    width: min(120px, 12vmax);
+    margin: min(25px,calc(10vw/3));
+    display: grid;
+    transition: all .5s ease-in-out;
+    background-color: #000;
+    overflow: hidden;
+    container-type: size;
+    
+    & * {
+      transition: inherit;
+    }
+  }
+  
+  .playBtn:hover .butt {
+    --buttW: 1;
+  
+    & div { border-radius: 0 0 0 0%; }
+  }
+  
+  .container {
+    position: relative;
+    perspective: 0;
+    perspective-origin: 100% 100%;
+    grid-template-columns: 1fr 3fr;
+    pointer-events: none;
+    overflow: hidden;
+    background-color: #000;
+    mix-blend-mode: darken;
+    box-shadow: 0 0 red;
+  
+    &:nth-child(2 of .container) { scale: 1 -1; }
+  
+    & > div {
+      position: inherit;
+      inset-block: 0;
+    }
+  }
+  
+  .butt {
+    container-type: size;
+    transform-origin: 100% 0;
+    --buttW: 2;
+    --buttH: 2;
+    scale: var(--buttW) var(--buttH);
+    overflow: hidden;
+  
+    & div {
+      width: calc(100cqw*sqrt(2));
+      aspect-ratio: 1;
+      align-self: center;
+      right: calc(-50cqw*sqrt(2));
+      border-radius: 0 0 0 100%;
+  
+  
+      & div {
+        inset: 0;
+        background: #fff;
+        rotate: 45deg;
+      }
+    }
+  }
+  
+  .playBG {
+    perspective: 0;
+    perspective-origin: 100% 50%;
+  }
+  
+  .playGrad {
+    inset: 0;
+    background: linear-gradient(red, yellow, #08f, magenta, beige) ;
+    transform-origin: 25% 50%;
+    rotate: y 10deg;
+  }
+  
+  
+  :where(.tip) {
+    background: white;
+    transform-origin: 0 0;
+    rotate: y 10deg;
+  }
+  
+  #playPause {
+    &:not(:checked) ~ .scene :is(.pivot, .cube, .facet, .quadBG) {
+      animation-play-state: paused;
+    }
+    &:checked ~ .playBtn {
+      rotate: -90deg;
+  
+      & .container { box-shadow: 0 10px red; }
+  
+      & .butt {
+        --buttH: 1;
+        --buttW: .5;
+      }
+      & .tip { rotate: y 0deg; }
+      & .playBG { perspective-origin: 3000% 50%; }
+    }
+  } 
+  
+  @media (orientation: portrait) {
+    body {
+      font-size: .37vmin;
+    }
+  }
+  
+  /* the bit below has to be there because Chrome hates me */
+  
+  :where(#cylinder:checked ~ .scene .facet),
+  :where(#cube:checked ~ .scene .facet),
+  nav:has(:is(.cubeBtn,#cylinderCube div, #coneCylinder div:nth-child(98),.cylBtn):hover) ~ .scene .facet {
+    mask-image: none;
+    --gradBG2: linear-gradient(90deg, 
+        hsl(calc(var(--gradHue)*(.5*(1 + var(--dir)) + 1*var(--fStep)*var(--dir))) 100% 50%),
+        hsl(calc(var(--gradHue)*(.5*(1 + var(--dir)) - 1  + 1*var(--fStep)*var(--dir))) 100% 50%));
+  }

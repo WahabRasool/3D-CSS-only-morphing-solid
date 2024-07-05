@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./style.css">
+    <title>3D CSS-only morphing solid</title>
+</head>
+<body>
+    
+<input type="checkbox" name="playPause" id="playPause"/>
+<input type="radio" name="solid" id="pyramid"/>
+<input type="radio" name="solid" id="cone" checked="checked"/>
+<input type="radio" name="solid" id="cylinder"/>
+<input type="radio" name="solid" id="cube"/>
+<nav id="hoverable">
+  <div class="transition" id="pyramidCone">
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+  </div>
+  <div class="transition" id="coneCylinder">
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+  </div>
+  <div class="transition" id="cylinderCube">
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+  </div>
+  <div class="transition" id="cubePyramid">
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+  </div>
+  <div class="poles">
+    <label class="pyrBtn" for="pyramid"></label>
+    <label class="coneBtn" for="cone"></label>
+    <label class="cylBtn" for="cylinder"></label>
+    <label class="cubeBtn" for="cube"></label>
+  </div>
+  <div class="props">
+    <div class="icons">
+      <div class="icon" id="pyrIco"></div>
+      <div class="icon" id="conIco"></div>
+      <div class="icon" id="cylIco"></div>
+      <div class="icon" id="cubIco"></div>
+    </div>
+    <div class="arrows"></div>
+  </div>
+</nav>
+<div class="scene">
+  <div class="pivot">
+    <div class="cube">
+      <div class="quarter">
+        <div class="half">
+          <div class="slice">
+            <div class="facet"></div>
+          </div>
+          <div class="slice">
+            <div class="facet"></div>
+          </div>
+          <div class="slice">
+            <div class="facet"></div>
+          </div>
+          <div class="slice">
+            <div class="facet"></div>
+          </div>
+        </div>
+        <div class="half">
+          <div class="slice">
+            <div class="facet"></div>
+          </div>
+          <div class="slice">
+            <div class="facet"></div>
+          </div>
+          <div class="slice">
+            <div class="facet"></div>
+          </div>
+          <div class="slice">
+            <div class="facet"></div>
+          </div>
+        </div>
+      </div>
+      <div class="quarter">
+        <div class="half">
+          <div class="slice">
+            <div class="facet"></div>
+          </div>
+          <div class="slice">
+            <div class="facet"></div>
+          </div>
+          <div class="slice">
+            <div class="facet"></div>
+          </div>
+          <div class="slice">
+            <div class="facet"></div>
+          </div>
+        </div>
+        <div class="half">
+          <div class="slice">
+            <div class="facet"></div>
+          </div>
+          <div class="slice">
+            <div class="facet"></div>
+          </div>
+          <div class="slice">
+            <div class="facet"></div>
+          </div>
+          <div class="slice">
+            <div class="facet"></div>
+          </div>
+        </div>
+      </div>
+      <div class="quarter">
+        <div class="half">
+          <div class="slice">
+            <div class="facet"></div>
+          </div>
+          <div class="slice">
+            <div class="facet"></div>
+          </div>
+          <div class="slice">
+            <div class="facet"></div>
+          </div>
+          <div class="slice">
+            <div class="facet"></div>
+          </div>
+        </div>
+        <div class="half">
+          <div class="slice">
+            <div class="facet"></div>
+          </div>
+          <div class="slice">
+            <div class="facet"></div>
+          </div>
+          <div class="slice">
+            <div class="facet"></div>
+          </div>
+          <div class="slice">
+            <div class="facet"></div>
+          </div>
+        </div>
+      </div>
+      <div class="quarter">
+        <div class="half">
+          <div class="slice">
+            <div class="facet"></div>
+          </div>
+          <div class="slice">
+            <div class="facet"></div>
+          </div>
+          <div class="slice">
+            <div class="facet"></div>
+          </div>
+          <div class="slice">
+            <div class="facet"></div>
+          </div>
+        </div>
+        <div class="half">
+          <div class="slice">
+            <div class="facet"></div>
+          </div>
+          <div class="slice">
+            <div class="facet"></div>
+          </div>
+          <div class="slice">
+            <div class="facet"></div>
+          </div>
+          <div class="slice">
+            <div class="facet"></div>
+          </div>
+        </div>
+      </div>
+      <div class="lid">
+        <div class="cutOff">
+          <div class="cutOff">
+            <div class="cutOff">
+              <div class="cutOff">
+                <div class="quadrant">
+                  <div class="cross"></div>
+                  <div class="cross"></div>
+                  <div class="cross"></div>
+                  <div class="cross"></div>
+                  <div class="cross"></div>
+                  <div class="cross"></div>
+                  <div class="nacho"></div>
+                  <div class="nacho"></div>
+                  <div class="nacho"></div>
+                  <div class="nacho"></div>
+                </div>
+                <div class="quadBG"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="lid">
+        <div class="cutOff">
+          <div class="cutOff">
+            <div class="cutOff">
+              <div class="cutOff">
+                <div class="quadrant">
+                  <div class="diagon"></div>
+                  <div class="diagon"></div>
+                  <div class="diagon"></div>
+                  <div class="diagon"></div>
+                  <div class="diagon"></div>
+                  <div class="diagon"></div>
+                </div>
+                <div class="quadBG"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <label for="cube"></label>
+  <label for="cylinder"></label>
+  <label for="cone"></label>
+  <label for="pyramid"></label>
+</div>
+<label class="playBtn" for="playPause">
+  <div class="playBG">
+    <div class="playGrad"></div>
+  </div>
+  <div class="container">
+    <div class="butt">
+      <div></div>
+      <div></div>
+    </div>
+    <div class="tip"></div>
+  </div>
+  <div class="container">
+    <div class="butt">
+      <div></div>
+      <div></div>
+    </div>
+    <div class="tip"></div>
+  </div>
+</label>
+</body>
+</html>
